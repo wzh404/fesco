@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neowave.screening.dao.DictMapper">
+	<resultMap id="FescoDict1" type="com.neowave.screening.model.FescoDict1">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="NAME" property="name" jdbcType="VARCHAR" />
+		<result column="CODE" property="code" jdbcType="VARCHAR" />
+		<result column="DCODE" property="dcode" jdbcType="VARCHAR" />
+		<result column="VAL" property="val" jdbcType="INTEGER" />
+		<result column="DESCR" property="desc" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap id="FescoDict3" type="com.neowave.screening.model.FescoDict3">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="PID" property="pid" jdbcType="INTEGER" />
+		<result column="PPID" property="ppid" jdbcType="INTEGER" />
+		<result column="NAME" property="name" jdbcType="VARCHAR" />
+		<result column="CODE" property="code" jdbcType="VARCHAR" />
+		<result column="VAL" property="val" jdbcType="INTEGER" />
+		<result column="DESCR" property="desc" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap id="FescoDictRisk" type="com.neowave.screening.model.FescoDictRisk">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="CONTRACT_ID" property="contractId" jdbcType="INTEGER" />
+		<result column="RISK_ID" property="riskId" jdbcType="INTEGER" />
+		<result column="VAL" property="val" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<sql id="dict1_column_list">
+		ID, NAME, DCODE, CODE, VAL, DESCR
+	</sql>
+	
+	<sql id="dict3_column_list">
+		ID, PID, PPID, NAME, CODE, VAL, DESCR
+	</sql>
+	
+	<sql id="dict_risk_column_list">
+		ID, CONTRACT_ID, RISK_ID, VAL
+	</sql>
+	
+	<!-- 一级字典 -->
+	<select id="selectDict1" resultMap="FescoDict1">
+		select
+			<include refid="dict1_column_list" />
+		from 
+			t_fesco_dict_1
+		where 
+			dcode = #{dcode}
+	</select>
+	
+	<!-- 一级字典全部 -->
+	<select id="selectDict1All" resultMap="FescoDict1">
+		select
+			<include refid="dict1_column_list" />
+		from 
+			t_fesco_dict_1
+	</select>
+	
+	<!-- 三级字典 -->
+	<select id="selectDict3" resultMap="FescoDict3">
+		select
+			<include refid="dict3_column_list" />
+		from 
+			t_fesco_dict_3
+	</select>
+	
+	<!-- 项目风险字典 -->
+	<select id="selectDictRisk" resultType="java.util.HashMap">
+		select
+			<include refid="dict_risk_column_list" />
+		from 
+			t_fesco_dict_risk
+	</select>
+</mapper>
