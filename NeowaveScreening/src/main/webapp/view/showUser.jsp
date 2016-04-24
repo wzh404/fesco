@@ -16,6 +16,47 @@
 
 <body>
 <script type="text/javascript">
+function callAjax(url, data) {
+    var json = null;
+
+    $.ajax({
+        url: url,
+        data: data,
+        type: "get",
+        dataType: "json",
+        async: false,
+        success: function success(jsonData) {
+            console.log(jsonData.resultCode);
+            json = jsonData;
+        },
+        error: function error(XMLHttpRequest, textStatus, errorThrown) {
+            console.log(textStatus + ": " + XMLHttpRequest.status);
+        }
+    });
+
+    return json;
+}
+
+function appendOption(id, json){
+	$("#" + id).append("<option value='"+ json.id + "'  val='" + json.val + "'>" + json.name +"</option>");	
+}
+
+function createSelectLevel(id, list, pid){
+	for (var i = 0; i < list.length; i++){
+		if (list[i].pid == pid && list[i].ppid == 0){
+			appendOption(id, list[i]);
+		}
+	}
+}
+
+function createSelectLevel2(id, list, ppid){
+	for (var i = 0; i < list.length; i++){
+		if (list[i].ppid == ppid){
+			appendOption(id, list[i]);
+		}
+	}
+}
+
 function onCondition(el, code) {
 	$('#f_' + code).html(el.value);
 	var f = el.value;
@@ -25,12 +66,66 @@ function onCondition(el, code) {
 		var desc = el.options[el.selectedIndex].getAttribute("desc");
 		$('#e_01').html(desc);
 	}
+	
+	if (code == '12' || code == '13'){
+		var v = $('#sel_11 option:selected').attr('code');
+		if (v == '1101'){
+			g = 0;
+		}
+		else{
+			g = 0.75;
+		}
+		
+		$('#g_' + code).html(g);
+	}
+	
 	cal(code, f, g);
 }
 
-function cal(code, f, g){
-	var sex = 1;
-	var v = sex == 1 ? 16 : 17;
+function onCondition2(el, code){
+	$('#h_' + code).html(el.value);
+}
+
+function onCondition3(){
+	var c = $("#sel_02").val();	
+	var r = $("#sel_03").val();
+	var v = $("#risk_" + c + "_" + r).val();
+	
+	$('#h_20').html(v);
+}
+
+function isFemale(){
+	var v = $('#sel_11 option:selected').attr('code');
+	return v == '1105';
+}
+
+function isMale(){
+	var v = $('#sel_11 option:selected').attr('code');
+	return v == '1101';
+}
+
+function onConditionLevel1(){
+	$('#sel_level_2').empty();
+	createSelectLevel('sel_level_2', json_dict_3.list, $('#sel_level_1').val());
+	$('#sel_level_3').empty();
+	createSelectLevel2('sel_level_3', json_dict_3.list, $('#sel_level_2').val());
+}
+
+function onConditionLevel2(){
+	$('#sel_level_3').empty();
+	createSelectLevel2('sel_level_3', json_dict_3.list, $('#sel_level_2').val());
+}
+
+function onConditionLevel3(){
+	var f = $('#sel_level_3 option:selected').attr('val');
+	var g = $('#g_30').text();
+	
+	$('#f_30').html(f);	
+	cal('30', f, g);
+}
+
+function cal(code, f, g){	
+	var v = (isFemale() || isMale()) ? 16 : 17;
 	var h = parseFloat(f) * parseFloat(g) * (0.45 / v / 5) * 100; 
 	$('#h_' + code).html(h.toFixed(3));
 }
@@ -134,55 +229,92 @@ function cal_r(code){
 	</tr>
 	<tr>		
 		<td bgcolor="#B7DEE8">外包业务地域范围</td>
-		<td colspan="3">-</td>
-		<td style=" text-align:center" bgcolor="#D9D9D9">-</td>
+		<td colspan="3">
+			<select style="width:100%; height:100%" onchange="javascript: onCondition(this, '07')">
+			<c:forEach items="${dict.get('07')}" var="dict1">
+                <option value="${dict1.val}">${dict1.name}</option>
+            </c:forEach>
+            </select>
+        </td>
+		<td style=" text-align:center" bgcolor="#D9D9D9"><span id="f_07"></span></td>
 		<td style=" text-align:center" bgcolor="#D9D9D9"><span id="g_07">0.75</span></td>
 		<td style=" text-align:center" bgcolor="#D9D9D9"><span id="h_07"></span>%</td>
 	</tr>
 	<tr>
 		<td bgcolor="#B7DEE8">办公设施情况</td>
-		<td colspan="3">-</td>
-		<td style=" text-align:center" bgcolor="#D9D9D9">-</td>
-		<td style=" text-align:center" bgcolor="#D9D9D9"><span id="r_08">0.75</span></td>
-		<td style=" text-align:center" bgcolor="#D9D9D9">-</td>
+		<td colspan="3">
+			<select style="width:100%; height:100%" onchange="javascript: onCondition(this, '08')">
+			<c:forEach items="${dict.get('08')}" var="dict1">
+                <option value="${dict1.val}">${dict1.name}</option>
+            </c:forEach>
+            </select>
+		</td>
+		<td style=" text-align:center" bgcolor="#D9D9D9"><span id="f_08">0.75</span></td>
+		<td style=" text-align:center" bgcolor="#D9D9D9"><span id="g_08">0.75</span></td>
+		<td style=" text-align:center" bgcolor="#D9D9D9"><span id="h_08"></span>%</td>
 	</tr>
 	
 	<!--       -->
 	<tr>
 		<td style="text-align:center" rowspan="9" bgcolor="#FCD5B4">员工情况分析 </td>
 		<td bgcolor="#FCD5B4">平均薪资水平</td>
-		<td colspan="3">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
+		<td colspan="3">
+			<select style="width:100%; height:100%" onchange="javascript: onCondition(this, '09')">
+			<c:forEach items="${dict.get('09')}" var="dict1">
+                <option value="${dict1.val}">${dict1.name}</option>
+            </c:forEach>
+            </select>
+		</td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="f_09">-</span></td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="g_09">2</span></td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="h_09">0.75</span>%</td>
 	</tr>
 	<tr>
 		<td bgcolor="#FCD5B4">劳动合同平均年限</td>
-		<td colspan="3">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
+		<td colspan="3">
+			<select style="width:100%; height:100%" onchange="javascript: onCondition(this, '10')">
+			<c:forEach items="${dict.get('10')}" var="dict1">
+                <option value="${dict1.val}">${dict1.name}</option>
+            </c:forEach>
+            </select>
+		</td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="f_10">-</span></td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="g_10">2</span></td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="h_10">-</span>%</td>
 	</tr>
 	<tr>
 		<td bgcolor="#FCD5B4">项目是否继承工龄</td>
-		<td colspan="3">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
+		<td colspan="3">
+			<select style="width:100%; height:100%" onchange="javascript: onCondition(this, '19')">
+				<option value="5">是</option>
+				<option value="1">否</option>
+            </select>
+		</td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="f_19">-</span></td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="g_19">0.75</span></td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="h_19">-</span>%</td>
 	</tr>
 	<tr>
 		<td bgcolor="#FCD5B4">岗位分类</td>
-		<td>-</td><td>-</td><td>-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
+		<td style="width:11%;">
+			<select id="sel_level_1" style="width:100%; height:100%" onchange="javascript: onConditionLevel1()"></select>
+		</td>
+		<td style="width:12%;">
+			<select id="sel_level_2" style="width:100%; height:100%" onchange="javascript: onConditionLevel2()"></select>
+		</td>
+		<td style="width:12%;">
+			<select id="sel_level_3" style="width:100%; height:100%" onchange="javascript: onConditionLevel3()"></select>
+		</td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="f_30">0</span></td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="g_30">1</span></td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="h_30">0</span>%</td>
 	</tr>
 	<tr>
 		<td bgcolor="#FCD5B4">项目员工男女比例</td>
 		<td colspan="3">
-			<select style="width:100%; height:100%" onchange="javascript: onCondition(this, '11')">
+			<select id="sel_11" style="width:100%; height:100%" onchange="javascript: onCondition(this, '11')">
 			<c:forEach items="${dict.get('11')}" var="dict1">
-                <option value="${dict1.val}">${dict1.name}</option>
+                <option value="${dict1.val}" code="${dict1.code}">${dict1.name}</option>
             </c:forEach>
             </select>
 		</td>
@@ -192,74 +324,136 @@ function cal_r(code){
 	</tr>
 	<tr>
 		<td bgcolor="#FCD5B4">女工平均年龄</td>
-		<td colspan="3">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
+		<td colspan="3">
+			<select style="width:100%; height:100%" onchange="javascript: onCondition(this, '13')">
+			<c:forEach items="${dict.get('13')}" var="dict1">
+                <option value="${dict1.val}">${dict1.name}</option>
+            </c:forEach>
+            </select>
+		</td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="f_13">0</span></td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="g_13">0</span></td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="h_13">0</span>%</td>
 	</tr>
 	<tr>
 		<td bgcolor="#FCD5B4">男工平均年龄</td>
-		<td colspan="3">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
+		<td colspan="3">
+			<select style="width:100%; height:100%" onchange="javascript: onCondition(this, '12')">
+			<c:forEach items="${dict.get('12')}" var="dict1">
+                <option value="${dict1.val}">${dict1.name}</option>
+            </c:forEach>
+            </select>
+		</td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="f_13">0</span></td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="g_13">0</span></td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="h_13">0</span>%</td>
 	</tr>
 	<tr>
 		<td bgcolor="#FCD5B4">平均工龄</td>
-		<td colspan="3">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
+		<td colspan="3">
+			<select style="width:100%; height:100%" onchange="javascript: onCondition(this, '14')">
+			<c:forEach items="${dict.get('14')}" var="dict1">
+                <option value="${dict1.val}">${dict1.name}</option>
+            </c:forEach>
+            </select>
+        </td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="f_14">0</span></td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="g_14">0.5</span></td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="h_14">0</span>%</td>
 	</tr>
 	<tr>
 		<td bgcolor="#FCD5B4">平均受教育程度</td>
-		<td colspan="3">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
+		<td colspan="3">
+			<select style="width:100%; height:100%" onchange="javascript: onCondition(this, '15')">
+			<c:forEach items="${dict.get('15')}" var="dict1">
+                <option value="${dict1.val}">${dict1.name}</option>
+            </c:forEach>
+            </select>
+		</td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="f_15">0</span></td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="g_15">0.3</span></td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="h_15">0</span>%</td>
 	</tr>
 	
 	<!--  -->
 	<tr>
 		<td style="text-align:center" rowspan="2" bgcolor="#B8CCE4">行业情况分析 </td>
 		<td bgcolor="#B8CCE4">行业健康度</td>
-		<td colspan="3">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
+		<td colspan="3">
+			<select style="width:100%; height:100%" onchange="javascript: onCondition(this, '16')">
+			<c:forEach items="${dict.get('16')}" var="dict1">
+                <option value="${dict1.val}">${dict1.name}</option>
+            </c:forEach>
+            </select>
+		</td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="f_16">0</span></td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="g_16">0.1</span></td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="h_16">0</span>%</td>
 	</tr>
 	<tr>
 		<td bgcolor="#B8CCE4">行业出现时长</td>
-		<td colspan="3">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
+		<td colspan="3">
+			<select style="width:100%; height:100%" onchange="javascript: onCondition(this, '17')">
+			<c:forEach items="${dict.get('17')}" var="dict1">
+                <option value="${dict1.val}">${dict1.name}</option>
+            </c:forEach>
+            </select>
+		</td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="f_17">0</span></td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="g_17">0.1</span></td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="h_17">0</span>%</td>
 	</tr>
 	
 	<!--  -->
 	<tr>
 		<td style="text-align:center" rowspan="2" bgcolor="#C4BD97">项目分析 </td>
 		<td bgcolor="#C4BD97">外包规模</td>
-		<td colspan="5">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
+		<td colspan="5">
+			<select style="width:100%; height:100%" onchange="javascript: onCondition2(this, '18')">
+			<c:forEach items="${dict.get('18')}" var="dict1">
+                <option value="${dict1.val}">${dict1.name}</option>
+            </c:forEach>
+            </select>
+		</td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="h_18">0</span>%</td>
 	</tr>
 	<tr>
 		<td bgcolor="#C4BD97">项目风险记录</td>
-		<td colspan="3">-</td>
-		<td colspan="2">-</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
+		<td colspan="3">
+			<select id="sel_02" style="width:100%; height:100%" onchange="javascript: onCondition3()">
+			<c:forEach items="${dict.get('02')}" var="dict1">
+                <option value="${dict1.id}">${dict1.name}</option>
+            </c:forEach>
+            </select>
+        </td>
+		<td colspan="2">
+			<select id="sel_03" style="width:100%; height:100%" onchange="javascript: onCondition3()">
+			<c:forEach items="${dict.get('03')}" var="dict1">
+                <option value="${dict1.id}">${dict1.name}</option>
+            </c:forEach>
+            </select>		
+		</td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="h_20">0</span>%</td>
 	</tr>
 	
 	<tr>
 		<td colspan="7" bgcolor="#E26B0A" style="text-align:center;">风险系数</td>
-		<td style="text-align:center" bgcolor="#D9D9D9">-</td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="h_99">0</span>%</td>
 	</tr>
+	<c:forEach items="${dict.dictRisk}" var="risk">
+	<input type="hidden" id="risk_${risk.contractId}_${risk.riskId}" value="${risk.val}"/>	
+	</c:forEach>
 </table>
+
 <script src="js/jquery.min.js"></script>
 <script src="js/amazeui.min.js"></script>
 
 <script type="text/javascript">
 	cal_r('05');
+	var json_dict_3 = callAjax('dict3', {});
+	createSelectLevel('sel_level_1', json_dict_3.list, 0);
+	createSelectLevel('sel_level_2', json_dict_3.list, $('#sel_level_1').val());	
+	createSelectLevel2('sel_level_3', json_dict_3.list, $('#sel_level_2').val());
 </script>
 </body>
 </html>

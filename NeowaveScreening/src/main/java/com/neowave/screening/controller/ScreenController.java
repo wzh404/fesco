@@ -21,6 +21,7 @@ public class ScreenController {
 	public ModelAndView screening(){
 		DictVo dictVo = new DictVo();		
 		dictVo.setDict1List(dictService.selectDict1All());
+		dictVo.setDictRisk(dictService.selectDictRisk());
 		logger.info("size is " + dictVo.get("01").size());
 		
 		return new ModelAndView("showUser", "dict", dictVo);

@@ -5,6 +5,7 @@ public class FescoDictRisk {
 	private Integer contractId;
 	private Integer riskId;
 	private Integer val;
+	
 	public Integer getId() {
 		return id;
 	}

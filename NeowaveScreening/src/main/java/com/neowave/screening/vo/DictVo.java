@@ -4,10 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.neowave.screening.model.FescoDict1;
+import com.neowave.screening.model.FescoDictRisk;
 
 public class DictVo {
 	private List<FescoDict1> dict1List;
+	private List<FescoDictRisk> dictRisk;
 	
+	public List<FescoDictRisk> getDictRisk() {
+		return dictRisk;
+	}
+
+	public void setDictRisk(List<FescoDictRisk> dictRisk) {
+		this.dictRisk = dictRisk;
+	}
+
 	public List<FescoDict1> getDict1List() {
 		return dict1List;
 	}
