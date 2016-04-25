@@ -16,6 +16,96 @@
 
 <body>
 <script type="text/javascript">
+
+var initData = [
+	{code : '04', f: 0, g : 2, h: 0},
+	{code : '05', f: 0, g : 0, h: 0},
+	{code : '06', f: 0, g : 1.5, h: 0},
+	{code : '01', f: 0, g : 1, h: 0},
+	{code : '07', f: 0, g : 0.75, h: 0},
+	{code : '08', f: 0, g : 0.75, h: 0},
+	
+	{code : '09', f: 0, g : 2, h: 0},
+	{code : '10', f: 0, g : 2, h: 0},
+	{code : '19', f: 0, g : 0.75, h: 0},
+	{code : '30', f: 0, g : 1, h: 0},
+	{code : '11', f: 0, g : 0.75, h: 0},
+	{code : '12', f: 0, g : 0, h: 0},
+	{code : '13', f: 0, g : 0, h: 0},
+	{code : '14', f: 0, g : 0.5, h: 0},
+	{code : '15', f: 0, g : 0.3, h: 0},
+	
+	{code : '16', f: 0, g : 0.1, h: 0},
+	{code : '17', f: 0, g : 0.1, h: 0},
+	
+	{code : '18', f: 0, g : 0, h: 0},
+	{code : '20', f: 0, g : 0, h: 0},
+];
+
+function init(data){
+	for (var i = 0; i < data.length; i++){
+		var code = data[i].code;
+		if (code == '30'){
+			var f = $('#sel_level_3 option:selected').attr('val');
+			
+			$('#f_' + code).html(f);
+			$('#g_' + code).html(data[i].g);
+			//var g = data[i].g.toString();
+			
+			cal_h(code);
+		}
+		else if (code == '18'){
+			var h = $("#sel_18").val();
+			$('#h_' + code).html(h);
+		}
+		else if (code == '20'){
+			var c = $("#sel_02").val();	
+			var r = $("#sel_03").val();
+			var h = $("#risk_" + c + "_" + r).val();
+			
+			$('#h_' + code).html(h);
+		}
+		else{
+			var f = $("#sel_" + code).val();
+			$('#f_' + code).html(f);
+			
+			cal_g(code);
+			//var g = $('#g_' + code).html();			
+			
+			cal_h(code);			
+		}
+		
+		if (code == '01'){
+			var desc = $('#sel_01 option:selected').attr('desc')
+			$('#desc_01').html(desc);
+		}
+	}
+	
+	sum_h(data);
+}
+
+function sum_h(data){
+	var h18 = 0;
+	var h20 = 0;
+	var sum = 0;
+	for (var i = 0; i < data.length; i++){
+		var code = data[i].code;
+		var h = $('#h_' + code).html();
+		if (code == '18'){				
+			h18 = parseFloat(h);
+		}
+		else if (code == '20'){
+			h20 = parseFloat(h);
+		}
+		else{
+			sum += parseFloat(h);
+		}		
+	}
+	
+	var h = sum * h18 / 100.0 * h20 / 100.0;
+	$('#h_99').html(h.toFixed(3));
+}
+
 function callAjax(url, data) {
     var json = null;
 
@@ -58,32 +148,27 @@ function createSelectLevel2(id, list, ppid){
 }
 
 function onCondition(el, code) {
-	$('#f_' + code).html(el.value);
-	var f = el.value;
-	var g = $('#g_' + code).text();
-	
+	$('#f_' + code).html(el.value);	
 	if (code == '01'){
 		var desc = el.options[el.selectedIndex].getAttribute("desc");
-		$('#e_01').html(desc);
+		$('#desc_01').html(desc);
+	}
+	else if (code == '11'){
+		cal_g('05');
+		cal_g('12');
+		cal_g('13');
 	}
 	
-	if (code == '12' || code == '13'){
-		var v = $('#sel_11 option:selected').attr('code');
-		if (v == '1101'){
-			g = 0;
-		}
-		else{
-			g = 0.75;
-		}
-		
-		$('#g_' + code).html(g);
-	}
+	cal_g(code);
+	cal_h(code);
 	
-	cal(code, f, g);
+	sum_h(initData);
 }
 
 function onCondition2(el, code){
 	$('#h_' + code).html(el.value);
+	
+	sum_h(initData);
 }
 
 function onCondition3(){
@@ -92,6 +177,31 @@ function onCondition3(){
 	var v = $("#risk_" + c + "_" + r).val();
 	
 	$('#h_20').html(v);
+	sum_h(initData);
+}
+
+function onConditionLevel1(){
+	$('#sel_level_2').empty();
+	createSelectLevel('sel_level_2', json_dict_3.list, $('#sel_level_1').val());
+	
+	$('#sel_level_3').empty();
+	createSelectLevel2('sel_level_3', json_dict_3.list, $('#sel_level_2').val());
+	
+	onConditionLevel3();
+}
+
+function onConditionLevel2(){
+	$('#sel_level_3').empty();
+	createSelectLevel2('sel_level_3', json_dict_3.list, $('#sel_level_2').val());
+	
+	onConditionLevel3();
+}
+
+function onConditionLevel3(){
+	var f = $('#sel_level_3 option:selected').attr('val');	
+	$('#f_30').html(f);	
+	cal_h('30');
+	sum_h(initData);
 }
 
 function isFemale(){
@@ -104,36 +214,26 @@ function isMale(){
 	return v == '1101';
 }
 
-function onConditionLevel1(){
-	$('#sel_level_2').empty();
-	createSelectLevel('sel_level_2', json_dict_3.list, $('#sel_level_1').val());
-	$('#sel_level_3').empty();
-	createSelectLevel2('sel_level_3', json_dict_3.list, $('#sel_level_2').val());
-}
-
-function onConditionLevel2(){
-	$('#sel_level_3').empty();
-	createSelectLevel2('sel_level_3', json_dict_3.list, $('#sel_level_2').val());
-}
-
-function onConditionLevel3(){
-	var f = $('#sel_level_3 option:selected').attr('val');
-	var g = $('#g_30').text();
-	
-	$('#f_30').html(f);	
-	cal('30', f, g);
-}
-
-function cal(code, f, g){	
+function cal_h(code){	
 	var v = (isFemale() || isMale()) ? 16 : 17;
+	
+	var f = $('#f_' + code).html();
+	var g = $('#g_' + code).html();
 	var h = parseFloat(f) * parseFloat(g) * (0.45 / v / 5) * 100; 
 	$('#h_' + code).html(h.toFixed(3));
 }
 
-function cal_r(code){
-	var sex = 1;
-	var v = sex == 1 ? 1.75 : 2;
-	$('#g_' + code).html(v);
+function cal_g(code){
+	var g = $('#g_' + code).html();
+	
+	if (code == '12' || code == '13'){		
+		g = isMale() ? 0 : 0.75;		
+	}
+	else if (code == '05'){
+		g = (isFemale() || isMale()) ? 1.75 : 2;
+	}
+	
+	$('#g_' + code).html(g);
 }
 
 </script>
@@ -175,7 +275,7 @@ function cal_r(code){
 		<td style="text-align:center" rowspan="6" bgcolor="#B7DEE8">客户情况分析 </td>
 		<td bgcolor="#B7DEE8">客户运营情况</td>
 		<td colspan="3">
-			<select style="width:100%; height:100%" onchange="javascript: onCondition(this, '04')">
+			<select id="sel_04" style="width:100%; height:100%" onchange="javascript: onCondition(this, '04')">
 			<c:forEach items="${dict.get('04')}" var="dict1">
                 <option value="${dict1.val}">${dict1.name}</option>
             </c:forEach>
@@ -188,9 +288,9 @@ function cal_r(code){
 	<tr>
 		<td bgcolor="#B7DEE8">外包项目时长(商务合同周期)</td>
 		<td colspan="3">
-			<select style="width:100%; height:100%" onchange="javascript: onCondition(this, '05')">
+			<select id="sel_05" style="width:100%; height:100%" onchange="javascript: onCondition(this, '05')">
 			<c:forEach items="${dict.get('05')}" var="dict1">
-                <option value="${dict1.val}">${dict1.name}</option>
+                <option value="${dict1.desc}">${dict1.name}</option>
             </c:forEach>
             </select>
         </td>
@@ -201,7 +301,7 @@ function cal_r(code){
 	<tr>		
 		<td bgcolor="#B7DEE8">客户管理参与度</td>
 		<td colspan="3">
-			<select style="width:100%; height:100%" onchange="javascript: onCondition(this, '06')">
+			<select id="sel_06" style="width:100%; height:100%" onchange="javascript: onCondition(this, '06')">
 			<c:forEach items="${dict.get('06')}" var="dict1">
                 <option value="${dict1.val}">${dict1.name}</option>
             </c:forEach>
@@ -214,14 +314,14 @@ function cal_r(code){
 	<tr>
 		<td bgcolor="#B7DEE8">行业</td>
 		<td style="width:12%;">
-			<select id="s_01" style="width:100%; height:100%;" onchange="javascript: onCondition(this, '01')">
+			<select id="sel_01" style="width:100%; height:100%;" onchange="javascript: onCondition(this, '01')">
 			<c:forEach items="${dict.get('01')}" var="dict1">
                 <option value="${dict1.val}" desc="${dict1.desc}">${dict1.name}</option>
             </c:forEach>
             </select>
 		</td>
 		<td colspan="2" bgcolor="#B7DEE8" style="width:23%; height: 90px">
-			<div id="e_01" style="width:100%;height:100%;overflow:auto"></div>
+			<div id="desc_01" style="width:100%;height:100%;overflow:auto"></div>
 		</td>
 		<td style=" text-align:center" bgcolor="#D9D9D9"><span id="f_01"></span></td>
 		<td style=" text-align:center" bgcolor="#D9D9D9"><span id="g_01">1</span></td>
@@ -230,7 +330,7 @@ function cal_r(code){
 	<tr>		
 		<td bgcolor="#B7DEE8">外包业务地域范围</td>
 		<td colspan="3">
-			<select style="width:100%; height:100%" onchange="javascript: onCondition(this, '07')">
+			<select id="sel_07" style="width:100%; height:100%" onchange="javascript: onCondition(this, '07')">
 			<c:forEach items="${dict.get('07')}" var="dict1">
                 <option value="${dict1.val}">${dict1.name}</option>
             </c:forEach>
@@ -243,7 +343,7 @@ function cal_r(code){
 	<tr>
 		<td bgcolor="#B7DEE8">办公设施情况</td>
 		<td colspan="3">
-			<select style="width:100%; height:100%" onchange="javascript: onCondition(this, '08')">
+			<select id="sel_08" style="width:100%; height:100%" onchange="javascript: onCondition(this, '08')">
 			<c:forEach items="${dict.get('08')}" var="dict1">
                 <option value="${dict1.val}">${dict1.name}</option>
             </c:forEach>
@@ -259,7 +359,7 @@ function cal_r(code){
 		<td style="text-align:center" rowspan="9" bgcolor="#FCD5B4">员工情况分析 </td>
 		<td bgcolor="#FCD5B4">平均薪资水平</td>
 		<td colspan="3">
-			<select style="width:100%; height:100%" onchange="javascript: onCondition(this, '09')">
+			<select id="sel_09" style="width:100%; height:100%" onchange="javascript: onCondition(this, '09')">
 			<c:forEach items="${dict.get('09')}" var="dict1">
                 <option value="${dict1.val}">${dict1.name}</option>
             </c:forEach>
@@ -272,7 +372,7 @@ function cal_r(code){
 	<tr>
 		<td bgcolor="#FCD5B4">劳动合同平均年限</td>
 		<td colspan="3">
-			<select style="width:100%; height:100%" onchange="javascript: onCondition(this, '10')">
+			<select id="sel_10" style="width:100%; height:100%" onchange="javascript: onCondition(this, '10')">
 			<c:forEach items="${dict.get('10')}" var="dict1">
                 <option value="${dict1.val}">${dict1.name}</option>
             </c:forEach>
@@ -285,7 +385,7 @@ function cal_r(code){
 	<tr>
 		<td bgcolor="#FCD5B4">项目是否继承工龄</td>
 		<td colspan="3">
-			<select style="width:100%; height:100%" onchange="javascript: onCondition(this, '19')">
+			<select id="sel_19" style="width:100%; height:100%" onchange="javascript: onCondition(this, '19')">
 				<option value="5">是</option>
 				<option value="1">否</option>
             </select>
@@ -325,7 +425,7 @@ function cal_r(code){
 	<tr>
 		<td bgcolor="#FCD5B4">女工平均年龄</td>
 		<td colspan="3">
-			<select style="width:100%; height:100%" onchange="javascript: onCondition(this, '13')">
+			<select id="sel_13" style="width:100%; height:100%" onchange="javascript: onCondition(this, '13')">
 			<c:forEach items="${dict.get('13')}" var="dict1">
                 <option value="${dict1.val}">${dict1.name}</option>
             </c:forEach>
@@ -338,20 +438,20 @@ function cal_r(code){
 	<tr>
 		<td bgcolor="#FCD5B4">男工平均年龄</td>
 		<td colspan="3">
-			<select style="width:100%; height:100%" onchange="javascript: onCondition(this, '12')">
+			<select id="sel_12" style="width:100%; height:100%" onchange="javascript: onCondition(this, '12')">
 			<c:forEach items="${dict.get('12')}" var="dict1">
                 <option value="${dict1.val}">${dict1.name}</option>
             </c:forEach>
             </select>
 		</td>
-		<td style="text-align:center" bgcolor="#D9D9D9"><span id="f_13">0</span></td>
-		<td style="text-align:center" bgcolor="#D9D9D9"><span id="g_13">0</span></td>
-		<td style="text-align:center" bgcolor="#D9D9D9"><span id="h_13">0</span>%</td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="f_12">0</span></td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="g_12">0</span></td>
+		<td style="text-align:center" bgcolor="#D9D9D9"><span id="h_12">0</span>%</td>
 	</tr>
 	<tr>
 		<td bgcolor="#FCD5B4">平均工龄</td>
 		<td colspan="3">
-			<select style="width:100%; height:100%" onchange="javascript: onCondition(this, '14')">
+			<select id="sel_14" style="width:100%; height:100%" onchange="javascript: onCondition(this, '14')">
 			<c:forEach items="${dict.get('14')}" var="dict1">
                 <option value="${dict1.val}">${dict1.name}</option>
             </c:forEach>
@@ -364,7 +464,7 @@ function cal_r(code){
 	<tr>
 		<td bgcolor="#FCD5B4">平均受教育程度</td>
 		<td colspan="3">
-			<select style="width:100%; height:100%" onchange="javascript: onCondition(this, '15')">
+			<select id="sel_15" style="width:100%; height:100%" onchange="javascript: onCondition(this, '15')">
 			<c:forEach items="${dict.get('15')}" var="dict1">
                 <option value="${dict1.val}">${dict1.name}</option>
             </c:forEach>
@@ -380,7 +480,7 @@ function cal_r(code){
 		<td style="text-align:center" rowspan="2" bgcolor="#B8CCE4">行业情况分析 </td>
 		<td bgcolor="#B8CCE4">行业健康度</td>
 		<td colspan="3">
-			<select style="width:100%; height:100%" onchange="javascript: onCondition(this, '16')">
+			<select id="sel_16" style="width:100%; height:100%" onchange="javascript: onCondition(this, '16')">
 			<c:forEach items="${dict.get('16')}" var="dict1">
                 <option value="${dict1.val}">${dict1.name}</option>
             </c:forEach>
@@ -393,7 +493,7 @@ function cal_r(code){
 	<tr>
 		<td bgcolor="#B8CCE4">行业出现时长</td>
 		<td colspan="3">
-			<select style="width:100%; height:100%" onchange="javascript: onCondition(this, '17')">
+			<select id="sel_17" style="width:100%; height:100%" onchange="javascript: onCondition(this, '17')">
 			<c:forEach items="${dict.get('17')}" var="dict1">
                 <option value="${dict1.val}">${dict1.name}</option>
             </c:forEach>
@@ -409,7 +509,7 @@ function cal_r(code){
 		<td style="text-align:center" rowspan="2" bgcolor="#C4BD97">项目分析 </td>
 		<td bgcolor="#C4BD97">外包规模</td>
 		<td colspan="5">
-			<select style="width:100%; height:100%" onchange="javascript: onCondition2(this, '18')">
+			<select id="sel_18" style="width:100%; height:100%" onchange="javascript: onCondition2(this, '18')">
 			<c:forEach items="${dict.get('18')}" var="dict1">
                 <option value="${dict1.val}">${dict1.name}</option>
             </c:forEach>
@@ -449,11 +549,13 @@ function cal_r(code){
 <script src="js/amazeui.min.js"></script>
 
 <script type="text/javascript">
-	cal_r('05');
 	var json_dict_3 = callAjax('dict3', {});
 	createSelectLevel('sel_level_1', json_dict_3.list, 0);
 	createSelectLevel('sel_level_2', json_dict_3.list, $('#sel_level_1').val());	
 	createSelectLevel2('sel_level_3', json_dict_3.list, $('#sel_level_2').val());
+	
+	init(initData);
+	   
 </script>
 </body>
 </html>
