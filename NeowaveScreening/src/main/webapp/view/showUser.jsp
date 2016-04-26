@@ -240,7 +240,7 @@ function cal_g(code){
 
 <header class="am-topbar am-topbar-inverse admin-header">
   <div class="am-topbar-brand">
-    <strong>Fesco</strong> <small>岗位外包项目风险评估工具</small>
+    <strong>fesco</strong> <small>岗位外包项目风险评估工具</small>
   </div>
 
   <button class="am-topbar-btn am-topbar-toggle am-btn am-btn-sm am-btn-success am-show-sm-only" data-am-collapse="{target: '#topbar-collapse'}"><span class="am-sr-only">导航切换</span> <span class="am-icon-bars"></span></button>
@@ -249,12 +249,11 @@ function cal_g(code){
     <ul class="am-nav am-nav-pills am-topbar-nav am-topbar-right admin-header-list">
       <li class="am-dropdown" data-am-dropdown>
         <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;">
-          <span class="am-icon-users"></span> 系统管理员 <span class="am-icon-caret-down"></span>
+          <span class="am-icon-users"></span> 系统管理 <span class="am-icon-caret-down"></span>
         </a>
         <ul class="am-dropdown-content">
           <li><a href="#"><span class="am-icon-user"></span> 帮助</a></li>
-          <li><a href="#"><span class="am-icon-cog"></span> 设置</a></li>
-          <li><a href="#"><span class="am-icon-power-off"></span> 退出</a></li>
+          <li><a href="/screening/home"><span class="am-icon-cog"></span> 设置</a></li>
         </ul>
       </li>
     </ul>

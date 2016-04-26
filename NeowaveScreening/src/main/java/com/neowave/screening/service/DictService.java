@@ -2,11 +2,13 @@ package com.neowave.screening.service;
 
 import java.util.List;
 
+import com.neowave.screening.model.FescoDict;
 import com.neowave.screening.model.FescoDict1;
 import com.neowave.screening.model.FescoDict3;
 import com.neowave.screening.model.FescoDictRisk;
 
 public interface DictService {
+	public FescoDict selectDict(String code);
 	/**
 	 * 
 	 * @param dcode
@@ -31,4 +33,23 @@ public interface DictService {
 	 * @return
 	 */
 	public List<FescoDictRisk> selectDictRisk();
+	
+	/**
+	 * 
+	 * @param dict1
+	 * @return
+	 */
+	public int updateDict1(FescoDict1 dict1);
+	
+	/**
+	 * 
+	 * @param dict1
+	 * @return
+	 */
+	public int insertDict1(FescoDict1 dict1);
+	
+	
+	public List<FescoDict3> selectDict3Level1();
+	
+	public List<FescoDict3> selectDict3Level2(int pid);
 }

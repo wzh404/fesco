@@ -2,11 +2,13 @@ package com.neowave.screening.dao;
 
 import java.util.List;
 
+import com.neowave.screening.model.FescoDict;
 import com.neowave.screening.model.FescoDict1;
 import com.neowave.screening.model.FescoDict3;
 import com.neowave.screening.model.FescoDictRisk;
 
 public interface DictMapper {
+	public FescoDict selectDict(String code);
 	/**
 	 * 根据字典code查询一级字典数据
 	 * 
@@ -20,4 +22,12 @@ public interface DictMapper {
 	public List<FescoDictRisk> selectDictRisk();
 	
 	public List<FescoDict1> selectDict1All();
+	
+	public int updateDict1(FescoDict1 dict1);
+	
+	public int insertDict1(FescoDict1 dict1);
+	
+	public List<FescoDict3> selectDict3Level1();
+	
+	public List<FescoDict3> selectDict3Level2(int pid);
 }
