@@ -2,6 +2,8 @@ package com.neowave.screening.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.neowave.screening.model.FescoDict;
 import com.neowave.screening.model.FescoDict1;
 import com.neowave.screening.model.FescoDict3;
@@ -27,7 +29,9 @@ public interface DictMapper {
 	
 	public int insertDict1(FescoDict1 dict1);
 	
+	public int updateDict3(FescoDict3 dict3);
+	
 	public List<FescoDict3> selectDict3Level1();
 	
-	public List<FescoDict3> selectDict3Level2(int pid);
+	public List<FescoDict3> selectDict3Level2(@Param("pid") Integer pid);
 }

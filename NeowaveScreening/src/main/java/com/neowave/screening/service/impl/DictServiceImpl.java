@@ -60,4 +60,9 @@ public class DictServiceImpl implements DictService {
 	public List<FescoDict3> selectDict3Level2(int pid) {
 		return dictMapper.selectDict3Level2(pid);
 	}
+
+	@Override
+	public int updateDict3(FescoDict3 dict3) {
+		return dictMapper.updateDict3(dict3);
+	}
 }

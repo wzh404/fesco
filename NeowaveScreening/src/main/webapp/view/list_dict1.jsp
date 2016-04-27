@@ -37,27 +37,9 @@
             <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">一级字典</strong> /
                 <small>${dictName}</small>
             </div>
-        </div>
-
-        
+        </div>       
 
         <br/>
-
-        <div class="am-g">
-            <div class="am-u-sm-12 am-u-md-6">
-                <div class="am-btn-toolbar">
-                    <div class="am-btn-group am-btn-group-xs">
-                        <button type="button" class="am-btn am-btn-default"><span class="am-icon-plus"></span>
-                            <a href="javascript:remove();">删除</a>
-                        </button>
-                        <button type="button"  class="am-btn am-btn-default">
-                            <span class="am-icon-plus"><a href="javascript:add(0, '0000', '');">添加</a></span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div class="am-g">
             <div class="am-u-sm-12">
                 <table class="am-table am-table-striped am-table-hover table-main">
@@ -68,6 +50,9 @@
                         <th class="table-title">名称</th>
                         <th class="table-type">代码</th>
                         <th class="table-type">风险系数</th>
+                        <c:if test="${dictCode == '05'}">
+                        <th class="table-type">最终风险系数</th>
+                        </c:if>
                     </tr>
                     </thead>
                     <tbody>
@@ -78,6 +63,9 @@
                             <td><a href="javascript:add('${dict1.id}', '${dict1.name}', '${dict1.val}');">${dict1.name}</a></td>
                             <td>${dict1.code}</td>
 							<td>${dict1.val}</td>
+							<c:if test="${dictCode == '05'}">
+                        		<td class="table-type" style="color:red">${dict1.desc}</td>
+                        	</c:if>
                         </tr>
                     </c:forEach>
                     </tbody>

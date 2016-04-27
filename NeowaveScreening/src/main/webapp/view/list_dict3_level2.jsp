@@ -41,26 +41,55 @@
 
         <br/>
         <div class="am-g">
+            <div class="am-u-sm-12 am-u-md-6">
+                <div class="am-btn-toolbar">
+                    <div class="am-btn-group am-btn-group-xs">
+                        <button type="button" class="am-btn am-btn-default"><span class="am-icon-plus"></span>
+                            <a href="javascript:remove();">删除</a>
+                        </button>
+                        <button type="button"  class="am-btn am-btn-default">
+                            <span class="am-icon-plus"><a href="javascript:add(0, '0000', '');">添加</a></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="am-g">
             <div class="am-u-sm-12">
-                <table class="am-table am-table-striped am-table-hover table-main">
+                <table class="am-table   table-main">
                     <thead>
                     <tr>
-                        <th class="table-check"><input type="checkbox"/></th>
-                        <th class="table-id">ID</th>
-                        <th class="table-title">名称</th>
-                        <th class="table-type">代码</th>
-                        <th class="table-type">操作</th>
+                        <th class="table-title">二级分类   </th>
+                        <th class="table-type">三级分类</th>
+                        <th class="table-type">风险系数</th>
                     </tr>
                     </thead>
                     <tbody>
                     <c:forEach items="${dict3List}" var="dict3">
+                    <c:if test="${dict3.ppid == 0 }">
                         <tr>
-                            <td><input type="checkbox" name="dict_ids" value="${dict3.id}"/></td>
-                            <td>${dict1.id}</td>
-                            <td><a href="javascript:add('${dict3.id}', '${dict3.name}', '${dict3.val}');">${dict3.name}</a></td>
-                            <td>${dict3.code}</td>
-							<td><a href="/screening/dict3/list2/${dict3.id}">查看详细</a></td>
+                            <td rowspan="${listMap[dict3.id.intValue()].size()}" style="text-align:center;vertical-align:middle" bgcolor="#eeeeee">
+                            	<a href="javascript:add('${dict3.id }', ${dict3.pid }, '${dict3.name}', '${dict3.val}');"><span>${dict3.name}</span></a>
+                            </td>
+                            <td><a href="javascript:add(${listMap[dict3.id.intValue()].get(0).id }, ${listMap[dict3.id.intValue()].get(0).pid }, '${listMap[dict3.id.intValue()].get(0).name}', '${listMap[dict3.id.intValue()].get(0).val}');">
+                            	${listMap[dict3.id.intValue()].get(0).name}
+                            	</a>	
+                            </td>
+                            <td>${listMap[dict3.id.intValue()].get(0).val}</td>                         
                         </tr>
+                        
+                        <c:forEach items="${listMap[dict3.id.intValue()]}" var="dict" varStatus="loop">
+                        <c:if test="${loop.index != 0}">
+                        	<tr>
+                        		<td><a href="javascript:add(${dict.id }, ${dict.pid }, '${dict.name}', '${dict.val}');">${dict.name}</a></td>
+                        		<td>${dict.val}</td>
+                        	</tr>
+                        </c:if>	
+                        	
+                        </c:forEach>
+                        
+                    </c:if>
                     </c:forEach>
                     </tbody>
                 </table>
@@ -108,9 +137,25 @@
 <script type="text/javascript">
 	function trim(_s) { return _s.replace(/^\s+|\s+$/, ""); }
 
-    function add(dict_3_id, dict_3_name, dict_3_val){
+    function remove(){
+//        alert($("#form1 input[name='dict_code']").val());
+//        alert($("input[name='dict_ids']:checked").length);
+        if ($("input[name='dict_ids']:checked").length > 0){
+            $('#my-confirm').modal({
+                relatedTarget: this,
+                onConfirm: function(options) {
+                    $('#form1').submit();
+                },
+                onCancel: function() {
+//                    alert('算求，不弄了');
+                }
+            });
+        }
+    }
+
+    function add(dict_3_id, dict_3_pid, dict_3_name, dict_3_val){
         $('#dict_3_id').val(dict_3_id);
-        $('#dict_3_pid').val(0);
+        $('#dict_3_pid').val(dict_3_pid);
         $('#dict_3_name').val(dict_3_name);
         $('#dict_3_val').val(dict_3_val);
 
@@ -124,7 +169,7 @@
                 $('#save_update_dict_form').submit();
             },
             onCancel: function() {
-
+//                alert('算求，不弄了');
             }
         });
 

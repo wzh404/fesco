@@ -106,8 +106,6 @@
 			t_fesco_dict_3
 		where
 			pid = #{pid}
-		and 
-			ppid = 0
 	</select>
 	
 	<!-- 项目风险字典 -->
@@ -120,6 +118,13 @@
 	
 	<update id="updateDict1" parameterType="com.neowave.screening.model.FescoDict1">
 		UPDATE t_fesco_dict_1
+           SET val = #{val},
+               name = #{name}
+         WHERE id = #{id}
+	</update>
+	
+	<update id="updateDict3" parameterType="com.neowave.screening.model.FescoDict3">
+		UPDATE t_fesco_dict_3
            SET val = #{val},
                name = #{name}
          WHERE id = #{id}

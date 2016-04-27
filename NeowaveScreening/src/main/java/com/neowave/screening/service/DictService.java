@@ -52,4 +52,6 @@ public interface DictService {
 	public List<FescoDict3> selectDict3Level1();
 	
 	public List<FescoDict3> selectDict3Level2(int pid);
+	
+	public int updateDict3(FescoDict3 dict3);
 }

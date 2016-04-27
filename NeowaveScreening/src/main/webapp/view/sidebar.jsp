@@ -50,8 +50,8 @@
 					<li><a href="/screening/dict1/list/18"><span
 							class="am-icon-check"></span> 外包规模</a></li>
 				</ul></li>
-			<li><a href="/screening/dict3"><span class="am-icon-bookmark"></span> 岗位分类</a></li>
-			<li><a href="/admin/listUser"><span class="am-icon-bookmark"></span> 项目风险记录</a></li>
+			<li><a href="/screening/dict3/list"><span class="am-icon-bookmark"></span> 岗位分类</a></li>
+			<li><a href="/screening/risk/list"><span class="am-icon-bookmark"></span> 项目风险记录</a></li>
 		</ul>
 
 		<div class="am-panel am-panel-default admin-sidebar-panel">

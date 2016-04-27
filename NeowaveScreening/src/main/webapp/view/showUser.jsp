@@ -154,9 +154,9 @@ function onCondition(el, code) {
 		$('#desc_01').html(desc);
 	}
 	else if (code == '11'){
-		cal_g('05');
-		cal_g('12');
-		cal_g('13');
+		cal_g('05');cal_h('05');
+		cal_g('12');cal_h('12');
+		cal_g('13');cal_h('13');
 	}
 	
 	cal_g(code);
