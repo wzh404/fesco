@@ -130,6 +130,12 @@
          WHERE id = #{id}
 	</update>
 	
+	<update id="updateRisk" parameterType="com.neowave.screening.model.FescoDictRisk">
+		UPDATE t_fesco_dict_risk
+           SET val = #{val}
+         WHERE id = #{id}
+	</update>
+	
 	<insert id="insertDict1" parameterType="com.neowave.screening.model.FescoDict1">
 		insert into t_fesco_dict_1(
 			dcode,

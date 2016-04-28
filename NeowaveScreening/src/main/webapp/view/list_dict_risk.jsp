@@ -59,7 +59,7 @@
                         <c:forEach items="${contractList}" var="contract">
 	                        <c:forEach items="${dictRisk}" var="dict">
 	                        	<c:if test="${dict.riskId.intValue() == contract.id.intValue() && dict.contractId.intValue() == risk.id.intValue()}">
-	                            	<td><a href="javascript:add(${contract.id}, '${contract.name}', ${risk.id}, '${risk.name}', ${dict.val});">${dict.val}</a></td>
+	                            	<td><a href="javascript:add(${contract.id}, '${contract.name}', ${risk.id}, '${risk.name}', ${dict.id}, ${dict.val});">${dict.val}</a></td>
 	                            </c:if>
 	                        </c:forEach>
                         </c:forEach>
@@ -77,7 +77,7 @@
     <div class="am-modal-dialog">
         <div class="am-modal-hd"><span id="modal_add_title">${dictName}</span>
         </div>
-        <form id="save_update_dict_form" method="post" action="/screening/dict1/update3"/>
+        <form id="save_update_dict_form" method="post" action="/screening/risk/update"/>
         <div class="am-modal-bd">
 	        <table>
 	        	<tr><td style="text-align: right;width:50%">赔付情况：</td>
@@ -89,11 +89,12 @@
 			    </tr>
 			    <tr>     
 			      	<td style="text-align: right">风险系数：</td>
-			      	<td><input type="text" id="dict_val" name="dict_val" value=""/><span style="color:red">%</span></td>
+			      	<td><input type="text" id="dict_risk_val" name="dict_risk_val" value=""/><span style="color:red">%</span></td>
 			    </tr>
 			 </table>
 		        <input type="hidden" id="contract_id" name="contract_id" value=""/>
 		        <input type="hidden" id="risk_id" name="risk_id" value=""/>
+		        <input type="hidden" id="dict_risk_id" name="dict_risk_id" value=""/>
         </div>
         </form>
         <div class="am-modal-footer">
@@ -110,20 +111,21 @@
 <script type="text/javascript">
 	function trim(_s) { return _s.replace(/^\s+|\s+$/, ""); }
 
-    function add(contract_id, contract_name, risk_id, risk_name, dict_val){
+    function add(contract_id, contract_name, risk_id, risk_name, dict_id, dict_val){
         //$('#modal_add_title').html(title);
        // $('#dict_id').val(dict_id);
         $('#contract_id').val(contract_id);
         $('#contract_name').html(contract_name);
         $('#risk_id').val(risk_id);
         $('#risk_name').html(risk_name);
-        $('#dict_val').val(dict_val);
+        $('#dict_risk_id').val(dict_id);
+        $('#dict_risk_val').val(dict_val);
 
 //        $('#dic-modal-add').find('[data-am-modal-confirm]').off('click.close.modal.amui');
         var $promt = $('#dic-modal-add').modal({
             relatedTarget: this,
             onConfirm: function(options) {
-                if (trim($('#dict_val').val()) == ''){
+                if (trim($('#dict_risk_val').val()) == ''){
                     return;
                 }
                 $('#save_update_dict_form').submit();

@@ -146,6 +146,18 @@ public class DictController {
 		return mav;
 	}
 	
+	@RequestMapping(value = "/risk/update", method = {RequestMethod.POST})
+	public ModelAndView updateRisk(
+			@RequestParam(value = "dict_risk_id", required = true) Integer riskId,
+			@RequestParam(value = "dict_risk_val", required = true) Integer riskVal){
+		FescoDictRisk risk = new FescoDictRisk();
+		risk.setId(riskId);
+		risk.setVal(riskVal);
+		dictService.updateRisk(risk);
+		
+		return new ModelAndView("redirect:/risk/list/");
+	}
+	
 	
 	@RequestMapping(value = "/dict3/list", method = {RequestMethod.GET})
 	public ModelAndView listDict3(){

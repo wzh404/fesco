@@ -65,4 +65,9 @@ public class DictServiceImpl implements DictService {
 	public int updateDict3(FescoDict3 dict3) {
 		return dictMapper.updateDict3(dict3);
 	}
+
+	@Override
+	public int updateRisk(FescoDictRisk risk) {
+		return dictMapper.updateRisk(risk);
+	}
 }
