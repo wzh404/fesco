@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neowave.screening.dao.DrugMapper">
+	<resultMap id="Drug" type="com.neowave.screening.model.Drug">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="cpmc" property="name" jdbcType="VARCHAR" />
+		<result column="pzwh" property="code" jdbcType="VARCHAR" />
+		<result column="jx" property="form" jdbcType="VARCHAR" />
+		<result column="gg" property="spec" jdbcType="VARCHAR" />
+		<result column="scdw" property="manufacturer" jdbcType="VARCHAR" />
+		<result column="cplb" property="category" jdbcType="VARCHAR" />
+		<result column="pzrq" property="approved" jdbcType="DATE" />
+		<result column="yfyl" property="usage" jdbcType="VARCHAR" />
+		<result column="otc" property="otc" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="drug_column_list">
+		id, cpmc, pzwh, jx, gg, scdw, cplb, pzrq, otc, yfyl
+	</sql>
+	
+	<select id="selectDrug" resultMap="Drug">
+		select
+			<include refid="drug_column_list" />
+		from 
+			drug
+		where 
+			pzwh = #{code}
+	</select>
+	
+	<select id="selectDrugManual" resultType="java.lang.String">
+		select sms from drug where pzwh = #{code}
+	</select>
+</mapper>
