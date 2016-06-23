@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.neowave.screening.service.DictService;
@@ -26,4 +28,11 @@ public class ScreenController {
 		
 		return new ModelAndView("showUser", "dict", dictVo);
 	}
+	
+	@RequestMapping("/defer")
+    @ResponseBody
+    public DeferredResult<String> deferredCall() {
+		DeferredResult<String> deferredResult = new DeferredResult<String>();
+        return deferredResult;
+    }
 }
