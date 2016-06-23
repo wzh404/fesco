@@ -86,7 +86,7 @@ public class HessianTcpClient {
 			in.startMessage();
 			in.readLong();
 			
-			String clsName = in.readString();
+			String className = in.readString();
 			String methodName = in.readString();
 			int len = in.readInt();
 			Object[] paras = new Object[len];
@@ -125,7 +125,8 @@ public class HessianTcpClient {
 
 		try {
 			out.startReply();
-			out.writeObject(object);			
+			out.writeObject(object);
+			out.writeLong(System.currentTimeMillis());
 			out.completeReply();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -153,9 +154,9 @@ public class HessianTcpClient {
 			System.out.println(code + "-" + major + " - " + minor);
 //			String className = in.readString();
 //			System.out.println(className);
-//			Class.forName(className)
+//			Class.forName(className)			
 			obj = in.readReply(returnType);
-//			obj = in.readObject();			
+			long lsn = in.readLong();
 			in.completeReply();
 		} catch (IOException e) {
 			e.printStackTrace();
